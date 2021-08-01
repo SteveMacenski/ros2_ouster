@@ -59,11 +59,17 @@ public:
     std::shared_ptr<sensor::FullRotationAccumulator> fullRotationAccumulator)
   : DataProcessorInterface(), _node(node), _frame(frame)
   {
+    _node->declare_parameter("pointcloud_filter_zero_points", false);
+    _node->get_parameter("pointcloud_filter_zero_points", _filter_zero_points);
+
     _fullRotationAccumulator = fullRotationAccumulator;
     _height = mdata.format.pixels_per_column;
     _width = mdata.format.columns_per_frame;
     _xyz_lut = ouster::make_xyz_lut(mdata);
     _cloud = std::make_unique<Cloud>(_width, _height);
+    _cloud_filtered = _filter_zero_points
+      ? std::make_unique<Cloud>(_width * _height, 1)
+      : nullptr;
     _pub = _node->create_publisher<sensor_msgs::msg::PointCloud2>(
       "points", qos);
   }
@@ -89,9 +95,24 @@ public:
     ros2_ouster::toCloud(
       _xyz_lut, _fullRotationAccumulator->getTimestamp(),
       *_fullRotationAccumulator->getLidarScan(), *_cloud);
+
+    if (_filter_zero_points) {
+      _cloud_filtered->points.clear();
+
+      for (const auto & p : _cloud->points) {
+        if (p.x == 0.0 && p.y == 0.0 && p.z == 0.0) {
+          continue;
+        }
+        _cloud_filtered->points.push_back(p);
+      }
+
+      _cloud_filtered->width = _cloud_filtered->points.size();
+      _cloud_filtered->height = 1;
+    }
+
     _pub->publish(
       ros2_ouster::toMsg(
-        *_cloud,
+        *(_filter_zero_points ? _cloud_filtered : _cloud),
         _fullRotationAccumulator->getTimestamp(),
         _frame, override_ts));
 
@@ -116,6 +137,8 @@ public:
 
 private:
   std::unique_ptr<Cloud> _cloud;
+  std::unique_ptr<Cloud> _cloud_filtered;
+  bool _filter_zero_points;
   rclcpp_lifecycle::LifecyclePublisher<sensor_msgs::msg::PointCloud2>::SharedPtr _pub;
   rclcpp_lifecycle::LifecycleNode::SharedPtr _node;
   ouster::XYZLut _xyz_lut;

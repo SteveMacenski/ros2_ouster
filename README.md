@@ -51,6 +51,7 @@ See design doc in `design/*` directory [here](ros2_ouster/design/design_doc.md).
 | `use_system_default_qos` | bool    | Publish data with default QoS for rosbag2 recording, default `False`                                        |
 | `timestamp_mode`         | String  | Method used to timestamp measurements, default `TIME_FROM_INTERNAL_OSC`                                     |
 | `os1_proc_mask`          | String  | Mask encoding data processors to activate, default <code>IMG &#124; PCL &#124; IMU &#124; SCAN</code> |
+| `pointcloud_filter_zero_points` | bool | Reduce pointcloud size by omitting (0, 0, 0) points, default `False`                                    |
 
 </center>
 
