@@ -1,6 +1,6 @@
 # ROS2 Ouster Drivers
 
-These are an implementation of ROS2 drivers for the Ouster lidar. This includes all models of the OS-x from 16 to 128 beams running the firmware 2.2-2.4.
+These are an implementation of ROS2 drivers for the Ouster lidar. This includes all models of the OS-x from 16 to 128 beams running the firmware 2.2-2.4. This is a legacy driver for those deploying within their applications. For new applications, we recommend checking out [Ouster's newly supported ROS 2 driver](https://github.com/ouster-lidar/ouster-ros) which we have also validated works well.
 
 You can find a few videos looking over the sensor below. They both introduce the ROS1 driver but are extremely useful references regardless:
 
