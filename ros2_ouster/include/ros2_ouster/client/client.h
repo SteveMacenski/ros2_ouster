@@ -58,7 +58,13 @@ namespace ouster {
       timestamp_mode ts_mode = TIME_FROM_UNSPEC,
       int lidar_port = 0,
       int imu_port = 0,
-      int timeout_sec = 60);
+      int timeout_sec = 60,
+      optional<MultipurposeIOMode> multipurpose_io_mode = MULTIPURPOSE_OFF,
+      optional<Polarity> nmea_polarity = POLARITY_ACTIVE_LOW,
+      optional<Polarity> sync_pulse_polarity = POLARITY_ACTIVE_HIGH,
+      optional<NMEABaudRate> nmea_baud_rate = BAUD_9600,
+      bool phase_lock_enable = false,
+      int phase_lock_offset = 0);
 
     /**
      * Block for up to timeout_sec until either data is ready or an error occurs.

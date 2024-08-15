@@ -31,6 +31,12 @@ struct Configuration
   std::string timestamp_mode;
   std::string metadata_filepath;
   std::string ethernet_device;
+  std::string multipurpose_io_mode;
+  std::string nmea_in_polarity;
+  std::string nmea_baud_rate;
+  std::string sync_pulse_in_polarity;
+  bool phase_lock_enable;
+  int phase_lock_offset;
 };
 
 }  // namespace ros2_ouster

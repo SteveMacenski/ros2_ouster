@@ -53,6 +53,12 @@ See design doc in `design/*` directory [here](ros2_ouster/design/design_doc.md).
 | `timestamp_mode`         | String  | Method used to timestamp measurements, default `TIME_FROM_INTERNAL_OSC`                                     |
 | `os1_proc_mask`          | String  | Mask encoding data processors to activate, default <code>IMG &#124; PCL &#124; IMU &#124; SCAN</code> |
 | `pointcloud_filter_zero_points` | bool | Reduce pointcloud size by omitting (0, 0, 0) points, default `False`. If used, will make the PC2 unstructured.     |
+| `multipurpose_io_mode`   | String  | Mode of multipurpose IO, default `OFF`                                                                      |
+| `nmea_in_polarity`       | String  | NMEA polarity, default `ACTIVE_HIGH`                                                                        |
+| `sync_pulse_in_polarity` | String  | Polarity of the hardware Sync line, default `ACTIVE_HIGH`                                                   |
+| `nmea_baud_rate`         | String  | NMEA baud rate, default `BAUD_9600`                                                                         |
+| `phase_lock_enable`      | bool    | Phase lock enabled, default `false`                                                                         |
+| `phase_lock_offset`      | int     | Offset between 0 and 360000 to begin the phase lock, default `0`                                            |
 
 
 </center>

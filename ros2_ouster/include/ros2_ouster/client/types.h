@@ -294,6 +294,14 @@ namespace ouster {
     std::string to_string(AzimuthWindow azimuth_window);
 
     /**
+     * Get string representation of a bool.
+     *
+     * @param value
+     * @return string representation of bool.
+     */
+    std::string to_string(bool value);
+
+    /**
      * Parse metadata text blob from the sensor into a sensor_info struct.
      *
      * String and vector fields will have size 0 if the parameter cannot

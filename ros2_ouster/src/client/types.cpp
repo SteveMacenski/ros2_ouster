@@ -426,6 +426,11 @@ std::string to_string(AzimuthWindow azimuth_window)
   return ss.str();
 }
 
+std::string to_string(bool value) 
+{
+  return value ? "true" : "false";
+}
+
 bool operator==(const AzimuthWindow& lhs, const AzimuthWindow& rhs) 
 {
   return (lhs.first == rhs.first && lhs.second == rhs.second);

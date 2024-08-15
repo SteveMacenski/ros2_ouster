@@ -59,6 +59,45 @@ void Sensor::configure(
     exit(-1);
   }
 
+  if (!ouster::sensor::multipurpose_io_mode_of_string(config.multipurpose_io_mode)) {
+    throw ros2_ouster::OusterDriverException(
+            "Invaild multipurpose io mode: " + config.multipurpose_io_mode);
+    exit(-1);
+  }
+
+  if (!ouster::sensor::polarity_of_string(config.nmea_in_polarity)) {
+    throw ros2_ouster::OusterDriverException(
+            "Invaild nmea in polarity: " + config.nmea_in_polarity);
+    exit(-1);
+  }
+
+  if (!ouster::sensor::polarity_of_string(config.sync_pulse_in_polarity)) {
+    throw ros2_ouster::OusterDriverException(
+            "Invaild sync pulse in polarity: " + config.sync_pulse_in_polarity);
+    exit(-1);
+  }
+
+  if (!ouster::sensor::nmea_baud_rate_of_string(config.nmea_baud_rate)) {
+    throw ros2_ouster::OusterDriverException(
+            "Invaild nmea baud rate: " + config.nmea_baud_rate);
+    exit(-1);
+  }
+
+  // Phase locking is only supported when time-synchronized from an external source (page 28. Ouster Software User Manual)
+  if(config.phase_lock_enable){
+    if (!(config.timestamp_mode == "TIME_FROM_PTP_1588" || config.timestamp_mode == "TIME_FROM_SYNC_PULSE_IN")) {
+      throw ros2_ouster::OusterDriverException(
+            "Phase Locking is only available when using external time-synchronization (TIME_FROM_PTP_1588 or TIME_FROM_SYNC_PULSE_IN):" + config.timestamp_mode);
+      exit(-1);
+    }
+  }
+
+  if(config.phase_lock_offset < 0 || config.phase_lock_enable > 360000) {
+    throw ros2_ouster::OusterDriverException(
+          "Phase lock offset must be between 0 and 360000 (0 to 360 degrees)" + std::to_string(config.phase_lock_offset));
+      exit(-1);
+  }
+
   // Report to the user whether automatic address detection is being used, and 
   // what the source / destination IPs are
   RCLCPP_INFO(
@@ -80,7 +119,14 @@ void Sensor::configure(
     ouster::sensor::lidar_mode_of_string(config.lidar_mode),
     ouster::sensor::timestamp_mode_of_string(config.timestamp_mode),
     config.lidar_port,
-    config.imu_port);
+    config.imu_port,
+    60,
+    ouster::sensor::multipurpose_io_mode_of_string(config.multipurpose_io_mode),
+    ouster::sensor::polarity_of_string(config.nmea_in_polarity),
+    ouster::sensor::polarity_of_string(config.sync_pulse_in_polarity),
+    ouster::sensor::nmea_baud_rate_of_string(config.nmea_baud_rate),
+    config.phase_lock_enable,
+    config.phase_lock_offset);
 
   if (!_ouster_client) {
     throw ros2_ouster::OusterDriverException(

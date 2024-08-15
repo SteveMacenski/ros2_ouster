@@ -546,9 +546,17 @@ std::shared_ptr<client> init_client(
 std::shared_ptr<client> init_client(
   const std::string & hostname,
   const std::string & udp_dest_host,
-  lidar_mode mode, timestamp_mode ts_mode,
-  int lidar_port, int imu_port,
-  int timeout_sec)
+  lidar_mode mode,
+  timestamp_mode ts_mode,
+  int lidar_port,
+  int imu_port,
+  int timeout_sec,
+  optional<MultipurposeIOMode> multipurpose_io_mode,
+  optional<Polarity> nmea_polarity,
+  optional<Polarity> sync_pulse_polarity,
+  optional<NMEABaudRate> nmea_baud_rate,
+  bool phase_lock_enable,
+  int phase_lock_offset)
 {
   auto cli = init_client(hostname, lidar_port, imu_port);
   if (!cli) {return std::shared_ptr<client>();}
@@ -604,6 +612,44 @@ std::shared_ptr<client> init_client(
       res);
     success &= res == "set_config_param";
   }
+
+  if (multipurpose_io_mode.has_value()) {
+    success &= do_tcp_cmd(
+      sock_fd, {"set_config_param", "multipurpose_io_mode", to_string(multipurpose_io_mode.value())},
+      res);
+    success &= res == "set_config_param";
+  }
+
+  if (nmea_polarity.has_value()) {
+    success &= do_tcp_cmd(
+      sock_fd, {"set_config_param", "nmea_in_polarity", to_string(nmea_polarity.value())},
+      res);
+    success &= res == "set_config_param";
+  }
+
+  if (sync_pulse_polarity.has_value()) {
+    success &= do_tcp_cmd(
+      sock_fd, {"set_config_param", "sync_pulse_in_polarity", to_string(sync_pulse_polarity.value())},
+      res);
+    success &= res == "set_config_param";
+  }
+
+  if (nmea_baud_rate.has_value()) {
+    success &= do_tcp_cmd(
+      sock_fd, {"set_config_param", "nmea_baud_rate", to_string(nmea_baud_rate.value())},
+      res);
+    success &= res == "set_config_param";
+  }
+
+  success &= do_tcp_cmd(
+    sock_fd, {"set_config_param", "phase_lock_enable", to_string(phase_lock_enable)},
+    res);
+  success &= res == "set_config_param";
+
+  success &= do_tcp_cmd(
+  sock_fd, {"set_config_param", "phase_lock_offset", std::to_string(phase_lock_offset)},
+  res);
+  success &= res == "set_config_param";
 
   // wake up from STANDBY, if necessary
   success &= do_tcp_cmd(

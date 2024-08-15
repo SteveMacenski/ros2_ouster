@@ -54,6 +54,12 @@ OusterDriver::OusterDriver(
   this->declare_parameter("lidar_port", 7502);
   this->declare_parameter("lidar_mode", std::string("512x10"));
   this->declare_parameter("timestamp_mode", std::string("TIME_FROM_INTERNAL_OSC"));
+  this->declare_parameter("multipurpose_io_mode", std::string("OFF"));
+  this->declare_parameter("nmea_in_polarity", std::string("ACTIVE_HIGH"));
+  this->declare_parameter("sync_pulse_in_polarity", std::string("ACTIVE_HIGH"));
+  this->declare_parameter("nmea_baud_rate", std::string("BAUD_9600"));
+  this->declare_parameter("phase_lock_enable", false);
+  this->declare_parameter<int>("phase_lock_offset", 0);
 }
 
 OusterDriver::~OusterDriver() = default;
@@ -75,6 +81,12 @@ void OusterDriver::onConfigure()
   lidar_config.lidar_port = this->get_parameter("lidar_port").as_int();
   lidar_config.lidar_mode = this->get_parameter("lidar_mode").as_string();
   lidar_config.timestamp_mode = this->get_parameter("timestamp_mode").as_string();
+  lidar_config.multipurpose_io_mode = this->get_parameter("multipurpose_io_mode").as_string();
+  lidar_config.nmea_in_polarity = this->get_parameter("nmea_in_polarity").as_string();
+  lidar_config.nmea_baud_rate = this->get_parameter("nmea_baud_rate").as_string();
+  lidar_config.sync_pulse_in_polarity = this->get_parameter("sync_pulse_in_polarity").as_string();
+  lidar_config.phase_lock_enable = this->get_parameter("phase_lock_enable").as_bool();
+  lidar_config.phase_lock_offset = this->get_parameter("phase_lock_offset").as_int();
 
   // Deliberately retrieve the IP parameters in a try block without defaults, as
   // we cannot estimate a reasonable default IP address for the LiDAR/computer.
