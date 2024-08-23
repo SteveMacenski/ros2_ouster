@@ -21,7 +21,15 @@ find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(ouster_msgs REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common)
-find_package(jsoncpp REQUIRED)
+# Workaround for upstream JsonCpp bug:
+# https://github.com/open-source-parsers/jsoncpp/issues/1356
+# This checks if the JsonCpp::JsonCpp target already exists before
+# trying to find the jsoncpp package again. This prevents the
+# "cannot create imported target" CMake error when multiple
+# dependencies try to find jsoncpp.
+if(NOT TARGET JsonCpp::JsonCpp)
+  find_package(jsoncpp REQUIRED)
+endif()
 
 include_directories(
   include
@@ -67,7 +75,7 @@ ament_target_dependencies(${library_name}
 )
 
 target_link_libraries(${library_name}
-  jsoncpp_lib
+  JsonCpp::JsonCpp
   tins
   ${PCL_LIBRARIES}
 )
